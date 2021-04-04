@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>KOROKMS</title>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+	<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
+</head>
+<body onload="initialize()" style="margin:0px; padding:0px">
+	<div id="map" style="width:100vw; height:100vh"></div>
+</body>
+</html>
+<script type="text/javascript">
+	function initialize() {
+		var distance = prompt("How many km?", "5");
+		distance = Number(distance)
+		if (!distance > 0){
+			console.log("nothing found")
+			initialize()
+		}else{
+			navigator.geolocation.getCurrentPosition(function(location) {
+				var rd = distance * 1000;
+				var latlng = new L.LatLng(location.coords.latitude, location.coords.longitude);
+				var mymap = L.map('map').setView(latlng, 20/((rd/1000)+3)+10);
+				L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+					maxZoom: 20,
+					minZoom: 6,
+					id: 'mapbox.streets',
+					accessToken: 'pk.eyJ1IjoiYmJyb29rMTU0IiwiYSI6ImNpcXN3dnJrdDAwMGNmd250bjhvZXpnbWsifQ.Nf9Zkfchos577IanoKMoYQ'
+				}).addTo(mymap);
+				var marker = L.marker(latlng).addTo(mymap);
+				var circle = L.circle(latlng, {
+					radius:rd
+				}).addTo(mymap);
+			});
+		}
+	}
+</script>
